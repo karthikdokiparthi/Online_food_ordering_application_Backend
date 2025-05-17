@@ -1,8 +1,6 @@
 package com.foodorder.application.online_food_ordering_application.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -10,7 +8,10 @@ import lombok.Data;
 @Data
 public class User {
     @Id
-    int id;
-    String username;
-    String password;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    private String username;
+    @Column(unique = true, nullable = false)
+    private String email;
+    private String password;
 }
