@@ -20,7 +20,7 @@ public class Dish {
     private String description;
     private String countryDish;
     private String type;
-    private String dishType;
+    private String dishCategory;
     private String category;
 
     @ManyToOne
@@ -31,7 +31,7 @@ public class Dish {
     // Constructors
     public Dish() {}
 
-    public Dish(String name, String img,double price, String description, String countryDish, String type, String category,String dishType, Restaurant restaurant) {
+    public Dish(String name, String img,double price, String description, String countryDish, String type, String category,String dishCategory, Restaurant restaurant) {
         this.name = name;
         this.img=img;
         this.price = price;
@@ -39,7 +39,7 @@ public class Dish {
         this.countryDish = countryDish;
         this.type = type;
         this.category = category;
-        this.dishType=dishType;
+        this.dishCategory=dishCategory;
         this.restaurant = restaurant;
     }
 }

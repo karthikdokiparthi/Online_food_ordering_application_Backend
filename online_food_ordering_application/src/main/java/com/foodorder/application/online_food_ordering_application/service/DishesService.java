@@ -20,4 +20,9 @@ public class DishesService {
     public List<Dish> getRestaurantDishes(Long id) {
         return dishRepository.findByRestaurantId(id);
     }
+
+
+    public List<Dish> getDishesByCategory(String category) {
+        return dishRepository.findByDishesCategory( category);
+    }
 }

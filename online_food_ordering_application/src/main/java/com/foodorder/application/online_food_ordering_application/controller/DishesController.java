@@ -37,4 +37,13 @@ public class DishesController {
         }
     }
 
+    @GetMapping("/dishes/category/{category}")
+    public ResponseEntity<List<Dish>> getDishesByCategory(@PathVariable String category){
+        List<Dish> dishes=dishesService.getDishesByCategory(category);
+        if(dishes!=null && !dishes.isEmpty()){
+            return new ResponseEntity<>(dishes,HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

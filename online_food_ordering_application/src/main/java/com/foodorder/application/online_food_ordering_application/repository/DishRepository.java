@@ -11,4 +11,7 @@ import java.util.List;
 public interface DishRepository extends JpaRepository<Dish,Long> {
 
     List<Dish> findByRestaurantId(Long id);
+
+    @Query("SELECT d FROM Dish d WHERE d.dishCategory LIKE %?1%")
+    List<Dish> findByDishesCategory(String dishCategory);
 }
