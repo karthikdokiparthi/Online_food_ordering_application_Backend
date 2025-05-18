@@ -10,6 +10,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(unique = true) // Add unique constraint
     private String username;
     @Column(unique = true, nullable = false)
     private String email;

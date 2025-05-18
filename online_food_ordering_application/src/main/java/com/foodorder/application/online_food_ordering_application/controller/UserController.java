@@ -2,6 +2,7 @@ package com.foodorder.application.online_food_ordering_application.controller;
 
 
 import com.foodorder.application.online_food_ordering_application.model.User;
+import com.foodorder.application.online_food_ordering_application.model.UserPrincipal;
 import com.foodorder.application.online_food_ordering_application.service.JwtService;
 import com.foodorder.application.online_food_ordering_application.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,11 @@ public class UserController {
 
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        String token = jwtService.generateToken(user.getUsername());
+
+        // Extract the ACTUAL username from the authenticated user
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        String token = jwtService.generateToken(userPrincipal.getUsername()); // Use DB username
+
         return ResponseEntity.ok().body(Map.of("token", token));
     }
 }
