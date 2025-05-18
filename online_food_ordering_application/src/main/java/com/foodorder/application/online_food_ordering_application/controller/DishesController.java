@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -25,4 +26,15 @@ public class DishesController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/dishes/{id}")
+    public ResponseEntity<List<Dish>> getRestaurantDishes(@PathVariable Long id){
+        List<Dish> dishes=dishesService.getRestaurantDishes(id);
+        if(dishes!=null && !dishes.isEmpty()){
+            return new ResponseEntity<>(dishes,HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
