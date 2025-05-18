@@ -1,0 +1,28 @@
+package com.foodorder.application.online_food_ordering_application.controller;
+
+import com.foodorder.application.online_food_ordering_application.model.Dish;
+import com.foodorder.application.online_food_ordering_application.service.DishesService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+public class DishesController {
+
+    @Autowired
+    DishesService dishesService;
+
+    @GetMapping("/dishes")
+    public ResponseEntity<List<Dish>> getAllDishes(){
+        List<Dish> dishes=dishesService.getDishes();
+        if(dishes!=null && !dishes.isEmpty()){
+            return new ResponseEntity<>(dishes, HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
