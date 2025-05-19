@@ -2,6 +2,7 @@ package com.foodorder.application.online_food_ordering_application.controller;
 
 import com.foodorder.application.online_food_ordering_application.model.Restaurant;
 import com.foodorder.application.online_food_ordering_application.service.RestaurantService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,19 +18,14 @@ public class RestaurantController {
 
 
     @GetMapping("/restaurant")
-    public ResponseEntity<List<Restaurant>> getAllRestaurants(){
-        List<Restaurant> restaurant=restaurantService.getAllRestaurantsData();
-        if(restaurant!=null && !restaurant.isEmpty()) {
-            return new ResponseEntity<>(restaurant, HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<List<Restaurant>> getAllRestaurants() {
+        List<Restaurant> restaurants = restaurantService.getAllRestaurantsData();
+        return ResponseEntity.ok(restaurants); // Always return 200 even if empty
     }
 
     @PostMapping("/restaurant")
-    public ResponseEntity<String> addRestaurant(@RequestBody Restaurant restaurant){
+    public ResponseEntity<String> addRestaurant(@Valid @RequestBody Restaurant restaurant) {
         restaurantService.addRestaurantData(restaurant);
-        String message="Data add Successfully";
-        return new ResponseEntity<>(message,HttpStatus.ACCEPTED);
+        return ResponseEntity.ok("Data added successfully");
     }
 }

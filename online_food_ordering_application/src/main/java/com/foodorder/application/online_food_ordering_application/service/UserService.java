@@ -1,8 +1,11 @@
 package com.foodorder.application.online_food_ordering_application.service;
 
+import com.foodorder.application.online_food_ordering_application.exception.DuplicateResourceException;
 import com.foodorder.application.online_food_ordering_application.model.User;
 import com.foodorder.application.online_food_ordering_application.repository.UserRepository;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +16,34 @@ public class UserService {
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     public User saveUser(User user) {
-        // Generate base username (e.g., "john.doe")
+        // Check for existing email
+        if (repository.existsByEmail(user.getEmail())) {
+            throw new DuplicateResourceException("Email already registered");
+        }
+
+        // Generate username
         String baseUsername = sanitizeName(user.getFirstName()) + "." + sanitizeName(user.getLastName());
         String uniqueUsername = generateUniqueUsername(baseUsername);
-
         user.setUsername(uniqueUsername);
+
+        // Encode password
         user.setPassword(encoder.encode(user.getPassword()));
-        return repository.save(user);
+
+        try {
+            return repository.save(user);
+        } catch (DataIntegrityViolationException ex) {
+            // Handle unique constraint violations (username)
+            if (isUsernameConflict(ex)) {
+                throw new DuplicateResourceException("Username already exists");
+            }
+            throw new DuplicateResourceException("Duplicate resource entry");
+        }
+    }
+
+    private boolean isUsernameConflict(DataIntegrityViolationException ex) {
+        return ex.getCause() instanceof ConstraintViolationException &&
+                ((ConstraintViolationException) ex.getCause()).getConstraintName() != null &&
+                ((ConstraintViolationException) ex.getCause()).getConstraintName().toLowerCase().contains("username");
     }
 
     private String sanitizeName(String name) {

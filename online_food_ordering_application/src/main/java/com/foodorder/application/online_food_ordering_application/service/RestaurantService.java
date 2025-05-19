@@ -1,10 +1,12 @@
 package com.foodorder.application.online_food_ordering_application.service;
 
+import com.foodorder.application.online_food_ordering_application.exception.DuplicateResourceException;
 import com.foodorder.application.online_food_ordering_application.model.Dish;
 import com.foodorder.application.online_food_ordering_application.model.Restaurant;
 import com.foodorder.application.online_food_ordering_application.repository.DishRepository;
 import com.foodorder.application.online_food_ordering_application.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,13 +22,10 @@ public class RestaurantService {
     }
 
     public void addRestaurantData(Restaurant restaurant) {
-        for(Dish dish:restaurant.getDishes()){
-            if(dish.getId()==null){
-                dishRepository.save(dish);
-            }else{
-                dishRepository.save(dish);
-            }
+        try {
             restaurantRepository.save(restaurant);
+        } catch (DataIntegrityViolationException ex) {
+            throw new DuplicateResourceException("Restaurant name already exists");
         }
     }
 }

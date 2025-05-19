@@ -28,22 +28,14 @@ public class DishesController {
     }
 
     @GetMapping("/dishes/{id}")
-    public ResponseEntity<List<Dish>> getRestaurantDishes(@PathVariable Long id){
-        List<Dish> dishes=dishesService.getRestaurantDishes(id);
-        if(dishes!=null && !dishes.isEmpty()){
-            return new ResponseEntity<>(dishes,HttpStatus.OK);
-        }else{
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<List<Dish>> getRestaurantDishes(@PathVariable Long id) {
+        List<Dish> dishes = dishesService.getRestaurantDishes(id);
+        return ResponseEntity.ok(dishes);
     }
 
     @GetMapping("/dishes/category/{category}")
-    public ResponseEntity<List<Dish>> getDishesByCategory(@PathVariable String category){
-        List<Dish> dishes=dishesService.getDishesByCategory(category);
-        if(dishes!=null && !dishes.isEmpty()){
-            return new ResponseEntity<>(dishes,HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<List<Dish>> getDishesByCategory(@PathVariable String category) {
+        List<Dish> dishes = dishesService.getDishesByCategory(category);
+        return ResponseEntity.ok(dishes);
     }
 }
