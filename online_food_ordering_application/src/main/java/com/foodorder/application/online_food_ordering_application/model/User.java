@@ -1,5 +1,6 @@
 package com.foodorder.application.online_food_ordering_application.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -28,4 +29,9 @@ public class User {
 
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
+
+    // Add this field to the User class
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Cart cart;
 }
