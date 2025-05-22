@@ -28,34 +28,32 @@ public class UserAddressController {
     }
 
     @PostMapping("/address")
-    public ResponseEntity<UserAddress> addAddress(@RequestBody UserAddress userAddress){
-        User currentUser=getCurrentUser();
-        UserAddress saveAddress=userAddressService.saveOrUpdateAddress(userAddress,currentUser);
+    public ResponseEntity<UserAddress> addAddress(@RequestBody UserAddress userAddress) {
+        User currentUser = getCurrentUser();
+        UserAddress saveAddress = userAddressService.saveOrUpdateAddress(userAddress, currentUser);
         return ResponseEntity.ok(saveAddress);
     }
 
     @GetMapping("/address")
-    public ResponseEntity<UserAddress> getUserAddress(){
-        User user=getCurrentUser();
-        UserAddress userAddress=userAddressService.getUserAddress(user);
+    public ResponseEntity<UserAddress> getUserAddress() {
+        User user = getCurrentUser();
+        UserAddress userAddress = userAddressService.getUserAddress(user);
         return ResponseEntity.ok(userAddress);
     }
 
     @PutMapping("/address")
-    public ResponseEntity<UserAddress> updateAddress(@RequestBody UserAddress userAddress){
-        User user=getCurrentUser();
-        UserAddress updateAddress=userAddressService.saveOrUpdateAddress(userAddress,user);
+    public ResponseEntity<UserAddress> updateAddress(@RequestBody UserAddress userAddress) {
+        User user = getCurrentUser();
+        UserAddress updateAddress = userAddressService.saveOrUpdateAddress(userAddress, user);
         return ResponseEntity.ok(updateAddress);
     }
 
-    //getting username & email
     @GetMapping("/username")
     public ResponseEntity<Map<String, String>> getUsername() {
         User user = getCurrentUser();
         Map<String, String> response = Map.of(
                 "username", user.getUsername(),
-                "email", user.getEmail()
-        );
+                "email", user.getEmail());
         return ResponseEntity.ok(response);
     }
 
