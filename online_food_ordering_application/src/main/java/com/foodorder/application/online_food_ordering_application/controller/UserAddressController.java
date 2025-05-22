@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 public class UserAddressController {
 
@@ -45,4 +47,15 @@ public class UserAddressController {
         UserAddress updateAddress=userAddressService.saveOrUpdateAddress(userAddress,user);
         return ResponseEntity.ok(updateAddress);
     }
+
+    @GetMapping("/username")
+    public ResponseEntity<Map<String, String>> getUsername() {
+        User user = getCurrentUser();
+        Map<String, String> response = Map.of(
+                "username", user.getUsername(),
+                "email", user.getEmail()
+        );
+        return ResponseEntity.ok(response);
+    }
+
 }

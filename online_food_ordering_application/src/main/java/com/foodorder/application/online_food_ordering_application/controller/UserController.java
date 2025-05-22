@@ -38,7 +38,7 @@ public class UserController {
         return "Hello";
     }
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody User user) {
         try {
             User savedUser = service.saveUser(user);
@@ -48,7 +48,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
         try {
             Authentication authentication = authenticationManager.authenticate(
