@@ -48,6 +48,7 @@ public class UserAddressController {
         return ResponseEntity.ok(updateAddress);
     }
 
+    //getting username & email
     @GetMapping("/username")
     public ResponseEntity<Map<String, String>> getUsername() {
         User user = getCurrentUser();
