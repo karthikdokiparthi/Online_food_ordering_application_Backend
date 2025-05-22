@@ -30,8 +30,11 @@ public class User {
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
-    // Add this field to the User class
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private Cart cart;
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private UserAddress userAddress;
 }
