@@ -10,5 +10,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     // For checking existing usernames during generation
     int countByUsernameStartingWith(String prefix);
 
-    boolean existsByEmail(String email);;
+    boolean existsByEmail(String email);
 }
