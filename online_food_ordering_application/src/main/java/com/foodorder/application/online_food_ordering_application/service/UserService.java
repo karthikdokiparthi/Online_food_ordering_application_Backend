@@ -3,7 +3,6 @@ package com.foodorder.application.online_food_ordering_application.service;
 import com.foodorder.application.online_food_ordering_application.exception.DuplicateResourceException;
 import com.foodorder.application.online_food_ordering_application.model.User;
 import com.foodorder.application.online_food_ordering_application.repository.UserRepository;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,16 +14,29 @@ public class UserService {
     private UserRepository repository;
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
+    // Original method for regular user registration
     public User saveUser(User user) {
-        // Check for existing email
+        return saveUser(user, false);
+    }
+
+    // Updated method with admin registration flag
+    public User saveUser(User user, boolean isAdminRegistration) {
+        // Check for existing email first
         if (repository.existsByEmail(user.getEmail())) {
             throw new DuplicateResourceException("Email already registered");
         }
 
-        // Generate username
-        String baseUsername = sanitizeName(user.getFirstName()) + "." + sanitizeName(user.getLastName());
-        String uniqueUsername = generateUniqueUsername(baseUsername);
-        user.setUsername(uniqueUsername);
+        // Handle username based on registration type
+        if (isAdminRegistration) {
+            validateAdminUsername(user);
+        } else {
+            generateUsername(user);
+        }
+
+        // Check for existing username
+        if (repository.existsByUsername(user.getUsername())) {
+            throw new DuplicateResourceException("Username already exists");
+        }
 
         // Encode password
         user.setPassword(encoder.encode(user.getPassword()));
@@ -32,34 +44,41 @@ public class UserService {
         try {
             return repository.save(user);
         } catch (DataIntegrityViolationException ex) {
-            // Handle unique constraint violations (username)
-            if (isUsernameConflict(ex)) {
-                throw new DuplicateResourceException("Username already exists");
-            }
-            throw new DuplicateResourceException("Duplicate resource entry");
+            handleIntegrityViolation(ex);
+            throw ex; // This will never be reached due to previous checks
         }
     }
 
-    private boolean isUsernameConflict(DataIntegrityViolationException ex) {
-        return ex.getCause() instanceof ConstraintViolationException &&
-                ((ConstraintViolationException) ex.getCause()).getConstraintName() != null &&
-                ((ConstraintViolationException) ex.getCause()).getConstraintName().toLowerCase().contains("username");
+    private void validateAdminUsername(User user) {
+        if (user.getUsername() == null || user.getUsername().isBlank()) {
+            throw new IllegalArgumentException("Username is required for admin registration");
+        }
+    }
+
+    private void generateUsername(User user) {
+        String baseUsername = sanitizeName(user.getFirstName()) + "." + sanitizeName(user.getLastName());
+        user.setUsername(generateUniqueUsername(baseUsername));
     }
 
     private String sanitizeName(String name) {
-        // Remove spaces and special characters, convert to lowercase
         return name.trim().toLowerCase()
-                .replaceAll("[^a-zA-Z0-9.]", "") // Allow only letters, numbers, and dots
+                .replaceAll("[^a-zA-Z0-9.]", "")
                 .replaceAll("\\s+", ".");
     }
 
     private String generateUniqueUsername(String baseUsername) {
         int count = repository.countByUsernameStartingWith(baseUsername);
-        if (count == 0) {
-            return baseUsername; // No duplicates
-        } else {
-            // Append incrementing number (e.g., "john.doe1")
-            return baseUsername + (count + 1);
+        return count == 0 ? baseUsername : baseUsername + (count + 1);
+    }
+
+    private void handleIntegrityViolation(DataIntegrityViolationException ex) {
+        if (ex.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+            String constraintName = ((org.hibernate.exception.ConstraintViolationException) ex.getCause())
+                    .getConstraintName();
+            if (constraintName != null && constraintName.toLowerCase().contains("username")) {
+                throw new DuplicateResourceException("Username already exists");
+            }
         }
+        throw new DuplicateResourceException("Duplicate resource entry");
     }
 }
