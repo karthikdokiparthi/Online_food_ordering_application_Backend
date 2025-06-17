@@ -1,5 +1,6 @@
 package com.foodorder.application.online_food_ordering_application.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +24,9 @@ import java.util.Arrays;
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
+
+    @Value("${frontend.url}")
+    private String url;
 
     public SecurityConfig(UserDetailsService userDetailsService, JwtFilter jwtFilter) {
         this.userDetailsService = userDetailsService;
@@ -48,7 +52,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        config.setAllowedOrigins(Arrays.asList(url));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
